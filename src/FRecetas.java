@@ -15,14 +15,9 @@ import javax.swing.JTable;
 public class FRecetas extends javax.swing.JFrame {
 
     Conexion2 cnx;
-    String todo = "SELECT r.numero, r.fechar, r.vigencia, r.estador, r.consultas_folio, "
-            + "COALESCE(d.medicamentos_claveme, '') AS medicamento, "
-            + "COALESCE(d.dosis, '') AS dosis, "
-            + "COALESCE(d.frecuencia, '') AS frecuencia, "
-            + "COALESCE(d.duracion, '') AS duracion, "
-            + "COALESCE(d.observaciones, '') AS observaciones "
-            + "FROM recetas r LEFT JOIN detalles_recetas d ON d.recetas_numero = r.numero "
-            + "ORDER BY r.numero";
+    String todo = "SELECT recetas.*, medicamentos_claveme, dosis, frecuencia, duracion, observaciones "
+            + "FROM recetas LEFT JOIN detalles_recetas ON numero = recetas_numero "
+            + "ORDER BY numero";
 
     public FRecetas() {
         initComponents();
@@ -346,17 +341,20 @@ public class FRecetas extends javax.swing.JFrame {
         CBEstado.setSelectedItem(TDetallesRecetas.getValueAt(filaSeleccionada, 3).toString());
         CBFolio.setSelectedItem(TDetallesRecetas.getValueAt(filaSeleccionada, 4).toString());
 
-        String claveMedicamento = TDetallesRecetas.getValueAt(filaSeleccionada, 5).toString();
-        if (claveMedicamento.equals("")) {
+        if (TDetallesRecetas.getValueAt(filaSeleccionada, 5) == null) {
+            // La receta no tiene medicamento: se limpian los campos del detalle
             CBClaveMedicamento.setSelectedIndex(-1);
+            TDosis.setText("");
+            TFrecuencia.setText("");
+            TDuracion.setText("");
+            TObservaciones.setText("");
         } else {
-            CBClaveMedicamento.setSelectedItem(claveMedicamento);
+            CBClaveMedicamento.setSelectedItem(TDetallesRecetas.getValueAt(filaSeleccionada, 5).toString());
+            TDosis.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 6).toString());
+            TFrecuencia.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 7).toString());
+            TDuracion.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 8).toString());
+            TObservaciones.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 9).toString());
         }
-
-        TDosis.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 6).toString());
-        TFrecuencia.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 7).toString());
-        TDuracion.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 8).toString());
-        TObservaciones.setText(TDetallesRecetas.getValueAt(filaSeleccionada, 9).toString());
     }//GEN-LAST:event_TDetallesRecetasMouseClicked
 
     private void BActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BActualizarActionPerformed
